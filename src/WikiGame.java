@@ -26,25 +26,19 @@ public class WikiGame implements ActionListener {
     private int maxDepth;
     private ArrayList<String> path = new ArrayList<>();
 
-    public WikiGame() {
-    }
+//    boolean visited = false;
 
     public static void main(String[] args) {
         WikiGame w = new WikiGame();
         w.prepareGUI();
     }
 
-    public WikiGame(int d) {
+    public WikiGame() {
         String startLink = "https://en.wikipedia.org/wiki/Zendaya";  // beginning link, where the program will start
         String endLink = "https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet";    // ending link, where the program is trying to get to
         maxDepth = 2;           // start this at 1 or 2, and if you get it going fast, increase
 
-        ArrayList<String> path = new ArrayList<>();
-        for (d = 0; d < 3; d++) ;
-
-
-
-        if (recurse(startLink, endLink, 0)) {
+        if (depthFirstSearch(startLink, endLink, 0, boolean[] visited)) {
             System.out.println("found it !!");
             path.add(startLink);
         } else {
@@ -55,24 +49,25 @@ public class WikiGame implements ActionListener {
 
     // recursion method, you'll probably want to rename it
     // you may want this method to return something or take additional parameters
-    public boolean recurse(String startLink, String endLink, int depth) {
+
+    public boolean depthFirstSearch(String startLink, String endLink, int depth, boolean [] visited) {
         // recursion method
         //public boolean findLink(String startLink, String endLink, int depth) {
 
         System.out.println("depth is: " + depth + ", link is: https://en.wikipedia.org" + startLink);
 
         // BASE CASE
-        if (true) {
+        if (startLink.equals(endLink)) {
+            visited[depth] = true;
             System.out.println(endLink);
-
-        } else if (true) {
-
+            System.out.println("found it !!");
+        } else if (depth == maxDepth) {
+            System.out.println("not found");
         }
-
         // GENERAL RECURSIVE CASE
         else {
-            maxDepth = depth;
-
+           boolean visited[] = new boolean[2];             //initialize a new boolean array to store the details of explored nodes
+            depthFirstSearch("", "",2 );
         }
 
         return false;
