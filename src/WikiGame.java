@@ -38,7 +38,7 @@ public class WikiGame implements ActionListener {
         String endLink = "https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet";    // ending link, where the program is trying to get to
         maxDepth = 2;           // start this at 1 or 2, and if you get it going fast, increase
 
-        if (depthFirstSearch(startLink, endLink, 0, boolean[] visited)) {
+        if (depthFirstSearch(startLink, endLink, 0)){
             System.out.println("found it !!");
             path.add(startLink);
         } else {
@@ -50,7 +50,7 @@ public class WikiGame implements ActionListener {
     // recursion method, you'll probably want to rename it
     // you may want this method to return something or take additional parameters
 
-    public boolean depthFirstSearch(String startLink, String endLink, int depth, boolean [] visited) {
+    public boolean depthFirstSearch(String startLink, String endLink, int depth /*boolean [] visited*/) {
         // recursion method
         //public boolean findLink(String startLink, String endLink, int depth) {
 
@@ -58,7 +58,7 @@ public class WikiGame implements ActionListener {
 
         // BASE CASE
         if (startLink.equals(endLink)) {
-            visited[depth] = true;
+           // visited[depth] = true;
             System.out.println(endLink);
             System.out.println("found it !!");
         } else if (depth == maxDepth) {
@@ -66,8 +66,13 @@ public class WikiGame implements ActionListener {
         }
         // GENERAL RECURSIVE CASE
         else {
-           boolean visited[] = new boolean[2];             //initialize a new boolean array to store the details of explored nodes
-            depthFirstSearch("", "",2 );
+           //visited[depth] = false;
+
+            //grab neighbors (all of the links) for the start wiki page
+            wGame();
+            //iterate through the neighbors (links)
+                //check to see if the neighbors are visited
+                    // recursive call
         }
 
         return false;
@@ -97,9 +102,9 @@ public class WikiGame implements ActionListener {
 
 //        panel.add(SEARCH);
 //        panel.add(search);
-        panel.add(start);
         panel.add(URL);
         panel.add(inputURL);
+        panel.add(start);
         mainFrame.add(ta,BorderLayout.CENTER);
 
 
@@ -113,22 +118,52 @@ public class WikiGame implements ActionListener {
         mainFrame.setVisible(true);
     }
 
-    private void WikiGame(){
+    private void wGame(){
         try {
             System.out.println();
-            URL url = new URL (inputURL.getText());
+            URL url = new URL ("https://en.wikipedia.org/wiki/Zendaya");
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(url.openStream())
             );
             String line;
-            while ( (line = reader.readLine()) != null ){
-                if (line.contains("href") && line.contains("https") && line.contains(search.getText()) ) {
-                    int start = line.indexOf("https") + 6;
-                    int end = line.indexOf("://",start);
-                    String Line = line.substring(start,end);
-                    System.out.println(Line);
-                    ta.setText(ta.getText() + "://" + Line + "\n");
-                }}
+            while ( (line = reader.readLine()) != null ) {
+//                System.out.println(line);
+                if (line.contains("href=") || line.contains("https") || line.contains("wiki")) {
+                    int n = -1;
+                    int start = line.indexOf("href=") + 6;
+
+                    line = line.substring(start);
+                    System.out.println(line);
+                    int end = line.indexOf("\"");
+                    int end2 = line.indexOf("\'");
+                    System.out.println("end \": " + end + " END 2 \': " + end2);
+                    if (end > n) {
+                        String newLine = line.substring(0, end);
+
+                        System.out.println(":" + newLine);
+                        ta.setText(ta.getText() + "\"" + newLine + "\n");
+                    } else if (end2 > n) {
+                        String newLine = line.substring(0, end2);
+                        System.out.println(newLine);
+                        ta.setText(ta.getText() + "\'" + newLine + "\n");
+                    }
+                    if (end != n && end2 != n) {
+                        if (end < end2) {
+                            String newLine = line.substring(0, end);
+
+                            System.out.println("::" + newLine);
+                            ta.setText(ta.getText() + "\"" + newLine + "\n");
+                        }
+                        if (end2 < end) {
+                            String newLine = line.substring(0, end2);
+                            System.out.println(":::" + newLine);
+                            ta.setText(ta.getText() + "\'" + newLine + "\n");
+                        }
+
+                    }
+                }
+
+            }
             reader.close();
         } catch(Exception ex) {
             System.out.println(ex);
@@ -144,7 +179,7 @@ public class WikiGame implements ActionListener {
             String command = e.getActionCommand();
             if (command.equals("START")){
                 start.setText("START clicked ");
-                WikiGame();
+               wGame();
             }
         }
     }
