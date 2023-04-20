@@ -19,6 +19,7 @@ public class WikiGame implements ActionListener {
     private JLabel SEARCH;
     private JButton start;
     private JPanel panel;
+    private JScrollPane scrollBar;
 
     private int WIDTH = 1400;
     private int HEIGHT = 1200;
@@ -101,8 +102,11 @@ public class WikiGame implements ActionListener {
         panel.add(start);
         panel.add(URL);
         panel.add(inputURL);
+        panel.add(start);
         mainFrame.add(ta,BorderLayout.CENTER);
-
+        scrollBar = new JScrollPane(ta);
+        scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        mainFrame.add(scrollBar,BorderLayout.CENTER);
 
 
         mainFrame.addWindowListener(new WindowAdapter() {
@@ -122,14 +126,50 @@ public class WikiGame implements ActionListener {
                     new InputStreamReader(url.openStream())
             );
             String line;
-            while ( (line = reader.readLine()) != null ){
-                if (line.contains("href") && line.contains("https") && line.contains(search.getText()) ) {
-                    int start = line.indexOf("https") + 6;
-                    int end = line.indexOf("://",start);
-                    String Line = line.substring(start,end);
-                    System.out.println(Line);
-                    ta.setText(ta.getText() + "://" + Line + "\n");
-                }}
+            while ( (line = reader.readLine()) != null ) {
+                System.out.println(line);
+                while (line.contains("href=")) {
+                    int n = -1;
+                    int start = line.indexOf("href=") + 6;
+
+                    line = line.substring(start);
+                    System.out.println(line);
+                    int end = line.indexOf("\"");
+                    int end2 = line.indexOf("\'");
+                    System.out.println("end \": " + end + " END 2 \': " + end2);
+
+                    String newLine = "";
+                    if (end > n) {
+                         newLine = line.substring(0, end);
+
+                        System.out.println(":" + newLine);
+//                        ta.setText(ta.getText() + "\"" + newLine + "\n");
+                    } else if (end2 > n) {
+                         newLine = line.substring(0, end2);
+                        System.out.println(newLine);
+//                        ta.setText(ta.getText() + "\'" + newLine + "\n");
+                    }
+                    if (end != n && end2 != n) {
+                        if (end < end2) {
+                             newLine = line.substring(0, end);
+
+                            System.out.println("::" + newLine);
+//                            ta.setText(ta.getText() + "\"" + newLine + "\n");
+                        }
+                        if (end2 < end) {
+                             newLine = line.substring(0, end2);
+                            System.out.println(":::" + newLine);
+//                            ta.setText(ta.getText() + "\'" + newLine + "\n");
+                        }
+                    }
+                    if (newLine.contains("/wiki/")){
+                        ta.setText(ta.getText() + "\'" + newLine + "\n");
+                    }
+                    line = line.substring(end);
+
+                }
+
+            }
             reader.close();
         } catch(Exception ex) {
             System.out.println(ex);
