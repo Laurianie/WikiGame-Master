@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashSet;
 
 public class WikiGame implements ActionListener {
     private JFrame mainFrame;
@@ -26,6 +27,8 @@ public class WikiGame implements ActionListener {
 
     private int maxDepth;
     private ArrayList<String> path = new ArrayList<>();
+    private ArrayList<String> noDupes = new ArrayList<String>();
+
 
     boolean visited = false;
 
@@ -126,8 +129,9 @@ public class WikiGame implements ActionListener {
                     new InputStreamReader(url.openStream())
             );
             String line;
+            String newLine = "";
             while ( (line = reader.readLine()) != null ) {
-                System.out.println(line);
+//                System.out.println(line);
                 while (line.contains("href=")) {
                     int n = -1;
                     int start = line.indexOf("href=") + 6;
@@ -136,44 +140,57 @@ public class WikiGame implements ActionListener {
                     System.out.println(line);
                     int end = line.indexOf("\"");
                     int end2 = line.indexOf("\'");
-                    System.out.println("end \": " + end + " END 2 \': " + end2);
+//                    System.out.println("end \": " + end + " END 2 \': " + end2);
 
-                    String newLine = "";
+//                    String newLine = "";
                     if (end > n) {
                          newLine = line.substring(0, end);
 
-                        System.out.println(":" + newLine);
-//                        ta.setText(ta.getText() + "\"" + newLine + "\n");
+//                        System.out.println(":" + newLine);
                     } else if (end2 > n) {
                          newLine = line.substring(0, end2);
-                        System.out.println(newLine);
-//                        ta.setText(ta.getText() + "\'" + newLine + "\n");
+//                        System.out.println(newLine);
                     }
                     if (end != n && end2 != n) {
                         if (end < end2) {
                              newLine = line.substring(0, end);
 
-                            System.out.println("::" + newLine);
-//                            ta.setText(ta.getText() + "\"" + newLine + "\n");
+//                            System.out.println("::" + newLine);
                         }
                         if (end2 < end) {
                              newLine = line.substring(0, end2);
-                            System.out.println(":::" + newLine);
-//                            ta.setText(ta.getText() + "\'" + newLine + "\n");
+//                            System.out.println(":::" + newLine);
                         }
                     }
                     if (newLine.contains("/wiki/")){
-                        ta.setText(ta.getText() + "\'" + newLine + "\n");
+                        if (!noDupes.contains(newLine)){
+                            noDupes.add(newLine);
+
+                        }
+                        //noDupes.add("\'" + newLine + "\n");
+//                        HashSet<String> fixDupes = new HashSet<String>(noDupes);
+//                        System.out.println(fixDupes);
+//                        ta.setText(ta.getText() + "\'" + newLine + "\n");
+//                        ta.setText(ta.getText()+fixDupes);
                     }
                     line = line.substring(end);
-
                 }
 
             }
+            System.out.println("no dupes");
+            print();
             reader.close();
         } catch(Exception ex) {
             System.out.println(ex);
         }
+    }
+
+
+    public void print(){
+        for(int i = 0; i > noDupes.size(); i++){
+            System.out.println(noDupes.get(i));
+        }
+
     }
 
     @Override
