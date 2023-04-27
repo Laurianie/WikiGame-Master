@@ -1,4 +1,6 @@
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +32,7 @@ public class WikiGame implements ActionListener {
     private ArrayList<String> noDupes = new ArrayList<String>();
 
 
-    boolean visited = false;
+//    boolean visited = false;
 
     public static void main(String[] args) {
         WikiGame w = new WikiGame();
@@ -39,10 +41,11 @@ public class WikiGame implements ActionListener {
 
     public WikiGame() {
         String startLink = "https://en.wikipedia.org/wiki/Zendaya";  // beginning link, where the program will start
-        String endLink = "https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet";    // ending link, where the program is trying to get to
+//        String endLink = "https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet";    // ending link, where the program is trying to get to
+        String endLink = "https://en.wikipedia.org/wiki/K.C._Undercover";
         maxDepth = 2;           // start this at 1 or 2, and if you get it going fast, increase
 
-        if (depthFirstSearch(startLink, endLink, 0)) {
+        if (depthFirstSearch(startLink, endLink, 1)) {
             System.out.println("found it !!");
             path.add(startLink);
         } else {
@@ -69,9 +72,10 @@ public class WikiGame implements ActionListener {
         }
         // GENERAL RECURSIVE CASE
         else {
-           // boolean already[] = new boolean[V];             //initialize a new boolean array to store the details of explored nodes
-            //depthFirstSearch(v, already);
-
+            WikiGame();
+            for(int i = 0; i > noDupes.size(); i++){
+               depthFirstSearch();
+            }
 
         }
 
@@ -123,7 +127,7 @@ public class WikiGame implements ActionListener {
 
     private void WikiGame(){
         try {
-            System.out.println();
+//            System.out.println();
             URL url = new URL (inputURL.getText());
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(url.openStream())
@@ -131,60 +135,44 @@ public class WikiGame implements ActionListener {
             String line;
             String newLine = "";
             while ( (line = reader.readLine()) != null ) {
-//                System.out.println(line);
                 while (line.contains("href=")) {
                     int n = -1;
                     int start = line.indexOf("href=") + 6;
 
                     line = line.substring(start);
-                    System.out.println(line);
+//                    System.out.println(line);
                     int end = line.indexOf("\"");
                     int end2 = line.indexOf("\'");
-//                    System.out.println("end \": " + end + " END 2 \': " + end2);
 
-//                    String newLine = "";
                     if (end > n) {
                          newLine = line.substring(0, end);
-
-//                        System.out.println(":" + newLine);
                     } else if (end2 > n) {
                          newLine = line.substring(0, end2);
-//                        System.out.println(newLine);
                     }
                     if (end != n && end2 != n) {
                         if (end < end2) {
                              newLine = line.substring(0, end);
-
-//                            System.out.println("::" + newLine);
                         }
                         if (end2 < end) {
                              newLine = line.substring(0, end2);
-//                            System.out.println(":::" + newLine);
                         }
                     }
                     if (newLine.contains("/wiki/")){
                         if (!noDupes.contains(newLine)){
                             noDupes.add(newLine);
-
+                            ta.setText(ta.getText() + "\'" + newLine + "\n");
                         }
-                        //noDupes.add("\'" + newLine + "\n");
-//                        HashSet<String> fixDupes = new HashSet<String>(noDupes);
-//                        System.out.println(fixDupes);
-//                        ta.setText(ta.getText() + "\'" + newLine + "\n");
-//                        ta.setText(ta.getText()+fixDupes);
                     }
                     line = line.substring(end);
                 }
 
             }
-            System.out.println("no dupes");
             print();
             reader.close();
         } catch(Exception ex) {
             System.out.println(ex);
         }
     }
-
 
     public void print(){
         for(int i = 0; i > noDupes.size(); i++){
