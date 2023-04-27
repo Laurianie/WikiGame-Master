@@ -72,7 +72,6 @@ public class WikiGame implements ActionListener {
            // boolean already[] = new boolean[V];             //initialize a new boolean array to store the details of explored nodes
             //depthFirstSearch(v, already);
 
-
         }
 
         return false;
@@ -140,38 +139,25 @@ public class WikiGame implements ActionListener {
                     System.out.println(line);
                     int end = line.indexOf("\"");
                     int end2 = line.indexOf("\'");
-//                    System.out.println("end \": " + end + " END 2 \': " + end2);
 
-//                    String newLine = "";
                     if (end > n) {
                          newLine = line.substring(0, end);
-
-//                        System.out.println(":" + newLine);
                     } else if (end2 > n) {
                          newLine = line.substring(0, end2);
-//                        System.out.println(newLine);
                     }
                     if (end != n && end2 != n) {
                         if (end < end2) {
                              newLine = line.substring(0, end);
-
-//                            System.out.println("::" + newLine);
                         }
                         if (end2 < end) {
                              newLine = line.substring(0, end2);
-//                            System.out.println(":::" + newLine);
                         }
                     }
                     if (newLine.contains("/wiki/")){
                         if (!noDupes.contains(newLine)){
                             noDupes.add(newLine);
-
+                            ta.setText(ta.getText() + "\'" + newLine + "\n");
                         }
-                        //noDupes.add("\'" + newLine + "\n");
-//                        HashSet<String> fixDupes = new HashSet<String>(noDupes);
-//                        System.out.println(fixDupes);
-//                        ta.setText(ta.getText() + "\'" + newLine + "\n");
-//                        ta.setText(ta.getText()+fixDupes);
                     }
                     line = line.substring(end);
                 }
