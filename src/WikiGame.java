@@ -21,17 +21,23 @@ public class WikiGame implements ActionListener {
     private JLabel URL;
     private JLabel SEARCH;
     private JButton start;
+
     private JPanel panel;
     private JScrollPane scrollBar;
 
     private int WIDTH = 1400;
     private int HEIGHT = 1200;
 
+
     private int maxDepth;
-    private ArrayList<String> path = new ArrayList<>();
     private ArrayList<String> noDupes = new ArrayList<String>();
 
+    ArrayList<String> Path = new ArrayList<String>();
+
     boolean foundlink = false;
+    boolean noTwice = false;
+    int counterr = 0;
+
 
 
     String startLink = "https://en.wikipedia.org/wiki/Zendaya";
@@ -44,20 +50,20 @@ public class WikiGame implements ActionListener {
         w.prepareGUI();
     }
 
-    public void WikiGame() {
-        // beginning link, where the program will start
-//        String endLink = "https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet";    // ending link, where the program is trying to get to
-//        String endLink = "https://en.wikipedia.org/wiki/K.C._Undercover";
-        maxDepth = 2;           // start this at 1 or 2, and if you get it going fast, increase
-
-//        if (depthFirstSearch(startLink, endLink, 2)) {
-//            System.out.println("found it !!");
-//            path.add(startLink);
-//        } else {
-//            System.out.println("did not find it !!");
-//        }
-
-    }
+//    public void WikiGame() {
+//        // beginning link, where the program will start
+////        String endLink = "https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet";    // ending link, where the program is trying to get to
+////        String endLink = "https://en.wikipedia.org/wiki/K.C._Undercover";
+//        maxDepth = 2;           // start this at 1 or 2, and if you get it going fast, increase
+//
+////        if (depthFirstSearch(startLink, endLink, 2)) {
+////            System.out.println("found it !!");
+////            path.add(startLink);
+////        } else {
+////            System.out.println("did not find it !!");
+////        }
+//
+//    }
 
     // recursion method, you'll probably want to rename it
     // you may want this method to return something or take additional parameters
@@ -130,71 +136,112 @@ public class WikiGame implements ActionListener {
 
     public void Wikigame( String originalLink, String fLink, int depth){
 
-        try {
-//          System.out.println();
-            //       URL url = new URL (inputURL.getText());
-            URL url = new URL(originalLink);
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(url.openStream())
-            );
-            String line;
-            if (foundlink == false){
-                while ((line = reader.readLine()) != null) {
-                    while (line.contains("href=")) {
-                        int n = -1;
-                        int start = line.indexOf("href=") + 6;
+        Path.add(originalLink);
 
-                        line = line.substring(start);
-//                    System.out.println(line);
-                        int end = line.indexOf("\"");
-                        int end2 = line.indexOf("\'");
+        if (foundlink == false) {
+            try {
+                //          System.out.println();
+                //       URL url = new URL (inputURL.getText());
+                URL url = new URL(originalLink);
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(url.openStream())
+                );
+                String line;
+                    while ((line = reader.readLine()) != null && foundlink == false) {
+                        while (line.contains("href=")) {
+                            int n = -1;
+                            int start = line.indexOf("href=") + 6;
 
-                        if (end > n) {
-                            originalLink = line.substring(0, end);
-                        } else if (end2 > n) {
-                            originalLink = line.substring(0, end2);
-                        }
-                        if (end != n && end2 != n) {
-                            if (end < end2) {
+                            line = line.substring(start);
+                            //                    System.out.println(line);
+                            int end = line.indexOf("\"");
+                            int end2 = line.indexOf("\'");
+
+                            if (end > n) {
                                 originalLink = line.substring(0, end);
-                            }
-                            if (end2 < end) {
+                            } else if (end2 > n) {
                                 originalLink = line.substring(0, end2);
                             }
-                        }
-                        if (originalLink.contains("/wiki/") && !(originalLink.contains("https:")) && !(originalLink.contains("en")) && !(originalLink.contains("//en.wikipedia.org/"))) {
-                            if (!noDupes.contains(originalLink)) {
-                                noDupes.add(originalLink);
-                                ta.setText(ta.getText() + "\'" + originalLink + "\n");
-
-                                String finalLink = "https://en.wikipedia.org" + originalLink;
-                                System.out.println(finalLink);
-
-                                if (finalLink.contains(fLink)) {
-                                    foundlink = true;
+                            if (end != n && end2 != n) {
+                                if (end < end2) {
+                                    originalLink = line.substring(0, end);
                                 }
-
-                                if (foundlink == true){
-                                    System.out.println("WE FOUND IT");
-                                    break;
-                                }
-
-                                if (depth <= 2 && foundlink == false) {
-                                    Wikigame(finalLink, fLink, depth + 1);
+                                if (end2 < end) {
+                                    originalLink = line.substring(0, end2);
                                 }
                             }
+                            if (originalLink.contains("/wiki/") && !(originalLink.contains("https:")) && !(originalLink.contains("en")) && !(originalLink.contains("//en.wikipedia.org/"))) {
+                                if (!noDupes.contains(originalLink)) {
+                                    noDupes.add(originalLink);
+
+
+                                    String finalLink = "https://en.wikipedia.org" + originalLink;
+
+
+                                    if (finalLink.contains(fLink)) {
+                                        Path.add(finalLink);
+                                        foundlink = true;
+                                    }
+
+                                    if (foundlink == true){
+                                        counterr++;
+                                    }
+
+                                    if (counterr == 2){
+                                        noTwice = true;
+                                    }
+
+                                    if (foundlink == true && noTwice == false ) {
+                                        System.out.println("WE FOUND IT");
+                                        ta.append("This is the path: ");
+
+                                        for (int i = 0; i < Path.size(); i++) {
+                                            System.out.println("This is the path: ");
+                                            System.out.println(Path.get(i));
+
+                                            ta.append(" \n ");
+                                            ta.append("↓");
+                                            ta.append(Path.get(i));
+                                            ta.append("\n");
+                                        }
+
+                                        Path.clear();
+                                    }
+
+                                    if (depth <= 2 && foundlink == false) {
+                                        Wikigame(finalLink, fLink, depth + 1);
+                                    }
+                                }
+                            }
+                            line = line.substring(end);
                         }
-                        line = line.substring(end);
+
                     }
 
-                }
+                print();
+                reader.close();
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+
+
+            if (foundlink == false && Path.size() >= 1) {
+                Path.remove(Path.size() - 1);
+            }
+
+
+
         }
-            print();
-            reader.close();
-        } catch(Exception ex) {
-            System.out.println(ex);
+
+
+
+
+
+
+
+
+
         }
-    }
 
     public void print(){
         for(int i = 0; i > noDupes.size(); i++){
